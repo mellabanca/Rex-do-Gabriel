@@ -2,10 +2,13 @@ var Rex, RexCorrendo;
 var chao;
 var chao2;
 var grama;
+var nuvem;
+var nuvemImagem;
 
 function preload(){
 RexCorrendo = loadAnimation("trex1.png","trex3.png","trex4.png");
 grama= loadImage('ground2.png');
+nuvemImagem=loadImage('cloud.png');
 }
 
 function setup(){
@@ -48,5 +51,17 @@ drawSprites();
 }
 
 function nuvens(){
+    if(frameCount%60===0){
+        nuvem=createSprite(600,100,40,10);
+        nuvem.addImage(nuvemImagem);
+        nuvem.y=Math.round(random(1,120));
+        nuvem.scale=0.6
+        nuvem.velocityX=-3;
 
+        nuvem.lifetime = 250;
+
+        nuvem.depth=Rex.depth;
+        Rex.depth+=1;
+    }
+ 
 }
