@@ -43,37 +43,58 @@ console.log(numero);
 
 grupoInimigos = new Group();
 grupoNuvens = new Group();
+
+//Rex.debug = true;
+Rex.setCollider("circle",0,0,40);
+
 }
 
 function draw(){
 background("white");
 //console.log(Rex.y);
+console.log("estado do jogo:"+estado);
 
 if(estado === JOGANDO){
     chao.velocityX=-2;
-} else if (estado === ACABOU){
-
+    if(keyDown("space")&&Rex.y>=155){
+        Rex.velocityY = -12;
 }
-
-
 if(chao.x<0){
-chao.x=chao.width/2;
-}
-
-if(keyDown("space")&&Rex.y>=155){
-Rex.velocityY = -12;
+    chao.x=chao.width/2;
 }
 Rex.velocityY += 1;
-Rex.collide(chao2);
-
+placar+=Math.round(frameCount/60);
 nuvens();
 inimigos();
+if(grupoInimigos.isTouching(Rex)){
+    estado=ACABOU;
+}
+
+
+
+
+
+    
+} else if (estado === ACABOU){
+chao.velocityX=0;
+grupoInimigos.setVelocityXEach(0);
+grupoNuvens.setVelocityXEach(0);
+}
+
+
+
+
+
+
+Rex.collide(chao2);
+
+
 
 drawSprites();
 textSize(15);
 textFont('Courier New');
 text(placar,500,50);
-placar+=Math.round(frameCount/60);
+
 
 
 }
