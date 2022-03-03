@@ -11,6 +11,15 @@ var grupoNuvens;
 var JOGANDO = 1;
 var ACABOU = 0;
 var estado = JOGANDO;
+var morreu;
+var restart;
+var imagemRestart;
+var gameover;
+var imagemGameover;
+var pular;
+var derrota;
+var checkpoint;
+
 function preload(){
 RexCorrendo = loadAnimation("trex1.png","trex3.png","trex4.png");
 grama= loadImage('ground2.png');
@@ -21,12 +30,19 @@ I3=loadImage('obstacle3.png');
 I4=loadImage('obstacle4.png');
 I5=loadImage('obstacle5.png');
 I6=loadImage('obstacle6.png');
+morreu=loadAnimation('trex_collided.png');
+imagemRestart=loadImage('restart.png');
+imagemGameover=loadImage('gameOver.png');
+pular=loadSound('jump.mp3');
+derrota=loadSound('die.mp3');
+checkpoint=loadSound('checkPoint.mp3');
 }
 
 function setup(){
 createCanvas(600,200);
 Rex = createSprite(50, 160, 20, 50);
 Rex.addAnimation("correndo", RexCorrendo);
+Rex.addAnimation('morreu',morreu);
 Rex.scale = 0.5;
 
 borda = createEdgeSprites();
@@ -47,6 +63,13 @@ grupoNuvens = new Group();
 //Rex.debug = true;
 Rex.setCollider("circle",0,0,40);
 
+/*gameover=createSprite(300,100);
+gameover.addImage(imagemGameover);
+restart=createSprite(300,150);
+restart.addImage(imagemRestart);
+restart.scale=0.8;*/
+
+
 }
 
 function draw(){
@@ -58,7 +81,8 @@ if(estado === JOGANDO){
     chao.velocityX=-2;
     if(keyDown("space")&&Rex.y>=155){
         Rex.velocityY = -12;
-}
+        pular.play();
+    }
 if(chao.x<0){
     chao.x=chao.width/2;
 }
@@ -68,17 +92,24 @@ nuvens();
 inimigos();
 if(grupoInimigos.isTouching(Rex)){
     estado=ACABOU;
+    derrota.play();
 }
-
+if(placar > 0 && placar % 100 === 0){
+    checkpoint.play();
+}
 
 
 
 
     
 } else if (estado === ACABOU){
+    Rex.changeAnimation("morreu");
 chao.velocityX=0;
+Rex.velocityY=0;
 grupoInimigos.setVelocityXEach(0);
 grupoNuvens.setVelocityXEach(0);
+grupoInimigos.setLifetimeEach(-1);
+grupoNuvens.setLifetimeEach(-1);
 }
 
 
