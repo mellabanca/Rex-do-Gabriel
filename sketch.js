@@ -63,22 +63,25 @@ grupoNuvens = new Group();
 //Rex.debug = true;
 Rex.setCollider("circle",0,0,40);
 
-/*gameover=createSprite(300,100);
+gameover=createSprite(300,100);
 gameover.addImage(imagemGameover);
 restart=createSprite(300,150);
 restart.addImage(imagemRestart);
-restart.scale=0.8;*/
+restart.scale=0.8;
 
+//inimigo.velocityX = 5;
 
 }
 
 function draw(){
 background("white");
 //console.log(Rex.y);
-console.log("estado do jogo:"+estado);
+//console.log("estado do jogo:"+estado);
 
 if(estado === JOGANDO){
-    chao.velocityX=-2;
+    gameover.visible=false;
+    restart.visible=false;
+    chao.velocityX=-(4+placar/100);
     if(keyDown("space")&&Rex.y>=155){
         Rex.velocityY = -12;
         pular.play();
@@ -96,6 +99,7 @@ if(grupoInimigos.isTouching(Rex)){
 }
 if(placar > 0 && placar % 100 === 0){
     checkpoint.play();
+    checkpoint.setVolume(0.5);
 }
 
 
@@ -103,6 +107,8 @@ if(placar > 0 && placar % 100 === 0){
 
     
 } else if (estado === ACABOU){
+    gameover.visible=true;
+    restart.visible=true;
     Rex.changeAnimation("morreu");
 chao.velocityX=0;
 Rex.velocityY=0;
@@ -119,7 +125,9 @@ grupoNuvens.setLifetimeEach(-1);
 
 Rex.collide(chao2);
 
-
+if(mousePressedOver(restart)){
+    reset();
+}
 
 drawSprites();
 textSize(15);
@@ -128,6 +136,10 @@ text(placar,500,50);
 
 
 
+}
+
+function reset(){
+    
 }
 
 function nuvens(){
@@ -150,7 +162,7 @@ function nuvens(){
 function inimigos(){
     if(frameCount%60===0){
         var inimigo=createSprite(600,165,10,40);
-        inimigo.velocityX=-6;
+        inimigo.velocityX=-(6+placar/100);
         var x=Math.round(random(1,6));
         switch(x){
             case 1:inimigo.addImage(I1);
@@ -173,3 +185,4 @@ function inimigos(){
         grupoInimigos.add(inimigo);
     }
 }
+
