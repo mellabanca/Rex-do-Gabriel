@@ -39,19 +39,19 @@ checkpoint=loadSound('checkPoint.mp3');
 }
 
 function setup(){
-createCanvas(600,200);
-Rex = createSprite(50, 160, 20, 50);
+createCanvas(windowWidth,windowHeight);
+Rex = createSprite(50, height-70, 20, 50);
 Rex.addAnimation("correndo", RexCorrendo);
 Rex.addAnimation('morreu',morreu);
 Rex.scale = 0.5;
 
 borda = createEdgeSprites();
 
-chao=createSprite(200,180,400,20);
+chao=createSprite(width/2,height-80,width,125);
 chao.addImage('grama',grama);
 chao.x=chao.width/2;
 
-chao2=createSprite(200,190,400,10);
+chao2=createSprite(width/2,height-10,width,125);
 chao2.visible=false;
 
 var numero = Math.round(random(1, 100));
@@ -63,9 +63,9 @@ grupoNuvens = new Group();
 //Rex.debug = true;
 Rex.setCollider("circle",0,0,40);
 
-gameover=createSprite(300,100);
+gameover=createSprite(width/2,height/2-50);
 gameover.addImage(imagemGameover);
-restart=createSprite(300,150);
+restart=createSprite(width/2,height/2);
 restart.addImage(imagemRestart);
 restart.scale=0.8;
 
@@ -82,15 +82,16 @@ if(estado === JOGANDO){
     gameover.visible=false;
     restart.visible=false;
     chao.velocityX=-(4+placar/100);
-    if(keyDown("space")&&Rex.y>=155){
+    if(touches.length > 0 || keyDown("space") && Rex.y>=155){
         Rex.velocityY = -12;
         pular.play();
+        touches = [];
     }
 if(chao.x<0){
     chao.x=chao.width/2;
 }
 Rex.velocityY += 1;
-placar+=Math.round(frameCount/60);
+placar+=Math.round(frameRate()/60);
 nuvens();
 inimigos();
 if(grupoInimigos.isTouching(Rex)){
@@ -101,9 +102,6 @@ if(placar > 0 && placar % 100 === 0){
     checkpoint.play();
     checkpoint.setVolume(0.5);
 }
-
-
-
 
     
 } else if (estado === ACABOU){
@@ -116,37 +114,38 @@ grupoInimigos.setVelocityXEach(0);
 grupoNuvens.setVelocityXEach(0);
 grupoInimigos.setLifetimeEach(-1);
 grupoNuvens.setLifetimeEach(-1);
+if(mousePressedOver(restart)){
+    reset();
 }
 
-
-
+}
 
 
 
 Rex.collide(chao2);
 
-if(mousePressedOver(restart)){
-    reset();
-}
 
 drawSprites();
 textSize(15);
 textFont('Courier New');
-text(placar,500,50);
-
+text(placar,50,50);
 
 
 }
 
 function reset(){
-    
+    estado=JOGANDO;
+    grupoNuvens.destroyEach();
+    grupoInimigos.destroyEach();
+    Rex.changeAnimation('correndo');
+    placar=0;
 }
 
 function nuvens(){
     if(frameCount%60===0){
-        nuvem=createSprite(600,100,40,10);
+        nuvem=createSprite(width+20,height-300,40,10);
         nuvem.addImage(nuvemImagem);
-        nuvem.y=Math.round(random(1,120));
+        nuvem.y=Math.round(random(10,height/2));
         nuvem.scale=0.6
         nuvem.velocityX=-3;
 
@@ -161,7 +160,7 @@ function nuvens(){
 }
 function inimigos(){
     if(frameCount%60===0){
-        var inimigo=createSprite(600,165,10,40);
+        var inimigo=createSprite(width,height-95,10,40);
         inimigo.velocityX=-(6+placar/100);
         var x=Math.round(random(1,6));
         switch(x){
